@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Trainees</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap');
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      margin: 20px;
+      background-color: #f0f2f5;
+    }
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+      font-size: 18px;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    img {
+      width: 100px;
+      height: auto;
+    }
+    .lang-switch {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 10px;
+    }
+    .lang-switch button {
+      background-color: transparent;
+      color: #4CAF50;
+      border: none;
+      cursor: pointer;
+      padding: 5px 10px;
+      font-size: 16px;
+    }
+    .lang-switch button:hover {
+      text-decoration: underline;
+    }
+    .action-buttons button {
+      padding: 10px 15px;
+      margin: 5px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .edit-button {
+      background-color: #ffc107;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+    .edit-button:hover {
+      background-color: #e0a800;
+    }
+    .delete-button {
+      background-color: #dc3545;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+    .delete-button:hover {
+      background-color: #c82333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="lang-switch">
+      <button onclick="setLanguage('en')">English</button>
+      <button onclick="setLanguage('ar')">العربية</button>
+    </div>
+    <h1 id="viewTitle">Trainees Information</h1>
+    <table id="traineesTable">
+      <thead>
+        <tr>
+          <th id="nameHeader">Name</th>
+          <th id="ageHeader">Age</th>
+          <th id="genderHeader">Gender</th>
+          <th id="placeOfBirthHeader">Place of Birth</th>
+          <th id="affiliationNumberHeader">Affiliation Number</th>
+          <th id="numberHeader">Contact Number</th>
+          <th id="cardPicHeader">Card Picture</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Trainee data will be inserted here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const translations = {
+      en: {
+        viewTitle: 'Trainees Information',
+        nameHeader: 'Name',
+        ageHeader: 'Age',
+        genderHeader: 'Gender',
+        placeOfBirthHeader: 'Place of Birth',
+        affiliationNumberHeader: 'Affiliation Number',
+        numberHeader: 'Contact Number',
+        cardPicHeader: 'Card Picture'
+      },
+      ar: {
+        viewTitle: 'معلومات المتدربين',
+        nameHeader: 'الاسم',
+        ageHeader: 'العمر',
+        genderHeader: 'الجنس',
+        placeOfBirthHeader: 'مكان الولادة',
+        affiliationNumberHeader: 'رقم الانتساب',
+        numberHeader: 'رقم الاتصال',
+        cardPicHeader: 'صورة البطاقة'
+      }
+    };
+
+    function setLanguage(lang) {
+      const container = document.querySelector('.container');
+      if (lang === 'ar') {
+        container.style.direction = 'rtl';
+      } else {
+        container.style.direction = 'ltr';
+      }
+
+      document.getElementById('viewTitle').textContent = translations[lang].viewTitle;
+      document.getElementById('nameHeader').textContent = translations[lang].nameHeader;
+      document.getElementById('ageHeader').textContent = translations[lang].ageHeader;
+      document.getElementById('genderHeader').textContent = translations[lang].genderHeader;
+      document.getElementById('placeOfBirthHeader').textContent = translations[lang].placeOfBirthHeader;
+      document.getElementById('affiliationNumberHeader').textContent = translations[lang].affiliationNumberHeader;
+      document.getElementById('numberHeader').textContent = translations[lang].numberHeader;
+      document.getElementById('cardPicHeader').textContent = translations[lang].cardPicHeader;
+    }
+
+    async function fetchTrainees() {
+      const response = await fetch('/view');
+      const trainees = await response.json();
+
+      const tableBody = document.querySelector('#traineesTable tbody');
+      tableBody.innerHTML = '';
+
+      trainees.forEach(trainee => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${trainee.name}</td>
+          <td>${trainee.age}</td>
+          <td>${trainee.gender}</td>
+          <td>${trainee.place_of_birth}</td>
+          <td>${trainee.affiliation_number}</td>
+          <td>${trainee.number}</td>
+          <td><img src="${trainee.card_pic_url}" alt="Card Picture"></td>
+          <td class="action-buttons">
+            <button class="edit-button" onclick="editTrainee(${trainee.id})">Edit</button>
+            <button class="delete-button" onclick="deleteTrainee(${trainee.id})">Delete</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    async function editTrainee(id) {
+      const trainee = {
+        name: prompt("Enter new name:"),
+        age: prompt("Enter new age:"),
+        gender: prompt("Enter new gender (Male/Female):"),
+        placeOfBirth: prompt("Enter new place of birth:"),
+        affiliationNumber: prompt("Enter new affiliation number:"),
+        number: prompt("Enter new contact number:")
+      };
+
+      if (trainee.name && trainee.age && trainee.gender && trainee.placeOfBirth && trainee.affiliationNumber && trainee.number) {
+        const response = await fetch(`/api/trainees/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(trainee)
+        });
+
+        if (response.ok) {
+          fetchTrainees();
+        } else {
+          alert('Failed to update trainee information');
+        }
+      } else {
+        alert('All fields are required.');
+      }
+    }
+
+    async function deleteTrainee(id) {
+      if (confirm("Are you sure you want to delete this trainee?")) {
+        const response = await fetch(`/api/trainees/${id}`, {
+          method: 'DELETE'
+        });
+
+        if (response.ok) {
+          fetchTrainees();
+        } else {
+          alert('Failed to delete trainee');
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchTrainees);
+
+    // Default language
+    setLanguage('en');
+  </script>
+</body>
+</html>
