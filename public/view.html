@@ -25,6 +25,7 @@
       text-align: center;
       color: #333;
       font-weight: 600;
+      margin-bottom: 20px;
     }
     table {
       width: 100%;
@@ -39,6 +40,12 @@
     }
     th {
       background-color: #f4f4f4;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
     }
     img {
       width: 100px;
@@ -60,29 +67,114 @@
     .lang-switch button:hover {
       text-decoration: underline;
     }
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
     .action-buttons button {
       padding: 10px 15px;
-      margin: 5px;
       border: none;
       border-radius: 4px;
       cursor: pointer;
       font-size: 16px;
-    }
-    .edit-button {
-      background-color: #ffc107;
-      color: white;
       transition: background-color 0.3s ease;
     }
+    .edit-button {
+      background-color: #007bff;
+      color: white;
+    }
     .edit-button:hover {
-      background-color: #e0a800;
+      background-color: #0056b3;
     }
     .delete-button {
       background-color: #dc3545;
       color: white;
-      transition: background-color 0.3s ease;
     }
     .delete-button:hover {
       background-color: #c82333;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+      padding-top: 60px;
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 500px;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .modal-input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px auto;
+      display: block;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    .modal-button {
+      padding: 10px 15px;
+      margin: 10px 5px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+    .save-button {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .save-button:hover {
+      background-color: #45a049;
+    }
+    .cancel-button {
+      background-color: #ccc;
+      color: white;
+    }
+    .cancel-button:hover {
+      background-color: #999;
+    }
+    .success-dialog {
+      background-color: #4CAF50;
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      z-index: 1000;
+      display: none;
+    }
+    .rtl {
+      direction: rtl;
     }
   </style>
 </head>
@@ -93,6 +185,7 @@
       <button onclick="setLanguage('ar')">العربية</button>
     </div>
     <h1 id="viewTitle">Trainees Information</h1>
+    <button onclick="openSubmitModal()">Submit New Trainee</button>
     <table id="traineesTable">
       <thead>
         <tr>
@@ -112,6 +205,73 @@
     </table>
   </div>
 
+  <!-- Submit Modal -->
+  <div id="submitModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('submitModal')">&times;</span>
+      <h2 id="submitTitle">Submit New Trainee</h2>
+      <form id="submitForm" enctype="multipart/form-data">
+        <label for="submitName" id="submitNameLabel">Name:</label>
+        <input type="text" id="submitName" class="modal-input" name="name" placeholder="Name">
+        <label for="submitAge" id="submitAgeLabel">Age:</label>
+        <input type="number" id="submitAge" class="modal-input" name="age" placeholder="Age">
+        <label for="submitGender" id="submitGenderLabel">Gender:</label>
+        <input type="text" id="submitGender" class="modal-input" name="gender" placeholder="Gender">
+        <label for="submitPlaceOfBirth" id="submitPlaceOfBirthLabel">Place of Birth:</label>
+        <input type="text" id="submitPlaceOfBirth" class="modal-input" name="placeOfBirth" placeholder="Place of Birth">
+        <label for="submitAffiliationNumber" id="submitAffiliationNumberLabel">Affiliation Number:</label>
+        <input type="text" id="submitAffiliationNumber" class="modal-input" name="affiliationNumber" placeholder="Affiliation Number">
+        <label for="submitNumber" id="submitNumberLabel">Contact Number:</label>
+        <input type="text" id="submitNumber" class="modal-input" name="number" placeholder="Contact Number">
+        <label for="submitCardPic" id="submitCardPicLabel">Card Picture:</label>
+        <input type="file" id="submitCardPic" class="modal-input" name="cardPic">
+        <button type="button" class="modal-button save-button" onclick="submitTrainee()">Submit</button>
+        <button type="button" class="modal-button cancel-button" onclick="closeModal('submitModal')">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('editModal')">&times;</span>
+      <h2 id="editTitle">Edit Trainee</h2>
+      <input type="hidden" id="editTraineeId">
+      <label for="editName" id="nameLabel">Name:</label>
+      <input type="text" id="editName" class="modal-input" placeholder="Name">
+      <label for="editAge" id="ageLabel">Age:</label>
+      <input type="number" id="editAge" class="modal-input" placeholder="Age">
+      <label for="editGender" id="genderLabel">Gender:</label>
+      <input type="text" id="editGender" class="modal-input" placeholder="Gender">
+      <label for="editPlaceOfBirth" id="placeOfBirthLabel">Place of Birth:</label>
+      <input type="text" id="editPlaceOfBirth" class="modal-input" placeholder="Place of Birth">
+      <label for="editAffiliationNumber" id="affiliationNumberLabel">Affiliation Number:</label>
+      <input type="text" id="editAffiliationNumber" class="modal-input" placeholder="Affiliation Number">
+      <label for="editNumber" id="numberLabel">Contact Number:</label>
+      <input type="text" id="editNumber" class="modal-input" placeholder="Contact Number">
+      <button class="modal-button save-button" id="saveButton" onclick="saveTrainee()">Save</button>
+      <button class="modal-button cancel-button" id="cancelButton" onclick="closeModal('editModal')">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Delete Modal -->
+  <div id="deleteModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('deleteModal')">&times;</span>
+      <h2 id="deleteTitle">Are you sure you want to delete this trainee?</h2>
+      <input type="hidden" id="deleteTraineeId">
+      <button class="modal-button save-button" id="deleteButtonYes" onclick="confirmDeleteTrainee()">Yes</button>
+      <button class="modal-button cancel-button" id="deleteButtonNo" onclick="closeModal('deleteModal')">No</button>
+    </div>
+  </div>
+
+  <!-- Success Dialog -->
+  <div id="successDialog" class="success-dialog">
+    <span id="successMessage">Information submitted successfully!</span>
+    <button onclick="printSuccessMessage()">Print</button>
+    <button onclick="closeSuccessDialog()">Close</button>
+  </div>
+
   <script>
     const translations = {
       en: {
@@ -122,7 +282,23 @@
         placeOfBirthHeader: 'Place of Birth',
         affiliationNumberHeader: 'Affiliation Number',
         numberHeader: 'Contact Number',
-        cardPicHeader: 'Card Picture'
+        cardPicHeader: 'Card Picture',
+        submitTitle: 'Submit New Trainee',
+        editTitle: 'Edit Trainee',
+        deleteTitle: 'Are you sure you want to delete this trainee?',
+        nameLabel: 'Name:',
+        ageLabel: 'Age:',
+        genderLabel: 'Gender:',
+        placeOfBirthLabel: 'Place of Birth:',
+        affiliationNumberLabel: 'Affiliation Number:',
+        numberLabel: 'Contact Number:',
+        submitCardPicLabel: 'Card Picture:',
+        submitButton: 'Submit',
+        cancelButton: 'Cancel',
+        saveButton: 'Save',
+        deleteButtonYes: 'Yes',
+        deleteButtonNo: 'No',
+        successMessage: 'Information submitted successfully!'
       },
       ar: {
         viewTitle: 'معلومات المتدربين',
@@ -132,16 +308,35 @@
         placeOfBirthHeader: 'مكان الولادة',
         affiliationNumberHeader: 'رقم الانتساب',
         numberHeader: 'رقم الاتصال',
-        cardPicHeader: 'صورة البطاقة'
+        cardPicHeader: 'صورة البطاقة',
+        submitTitle: 'تقديم متدرب جديد',
+        editTitle: 'تعديل المتدرب',
+        deleteTitle: 'هل أنت متأكد أنك تريد حذف هذا المتدرب؟',
+        nameLabel: 'الاسم:',
+        ageLabel: 'العمر:',
+        genderLabel: 'الجنس:',
+        placeOfBirthLabel: 'مكان الولادة:',
+        affiliationNumberLabel: 'رقم الانتساب:',
+        numberLabel: 'رقم الاتصال:',
+        submitCardPicLabel: 'صورة البطاقة:',
+        submitButton: 'تقديم',
+        cancelButton: 'إلغاء',
+        saveButton: 'حفظ',
+        deleteButtonYes: 'نعم',
+        deleteButtonNo: 'لا',
+        successMessage: 'تم تقديم المعلومات بنجاح!'
       }
     };
 
     function setLanguage(lang) {
       const container = document.querySelector('.container');
+      const successDialog = document.getElementById('successDialog');
       if (lang === 'ar') {
-        container.style.direction = 'rtl';
+        container.classList.add('rtl');
+        successDialog.classList.add('rtl');
       } else {
-        container.style.direction = 'ltr';
+        container.classList.remove('rtl');
+        successDialog.classList.remove('rtl');
       }
 
       document.getElementById('viewTitle').textContent = translations[lang].viewTitle;
@@ -152,6 +347,29 @@
       document.getElementById('affiliationNumberHeader').textContent = translations[lang].affiliationNumberHeader;
       document.getElementById('numberHeader').textContent = translations[lang].numberHeader;
       document.getElementById('cardPicHeader').textContent = translations[lang].cardPicHeader;
+
+      document.querySelector('#submitModal h2').textContent = translations[lang].submitTitle;
+      document.querySelector('#editModal h2').textContent = translations[lang].editTitle;
+      document.querySelector('#deleteModal h2').textContent = translations[lang].deleteTitle;
+      document.querySelector('label[for="submitName"]').textContent = translations[lang].nameLabel;
+      document.querySelector('label[for="submitAge"]').textContent = translations[lang].ageLabel;
+      document.querySelector('label[for="submitGender"]').textContent = translations[lang].genderLabel;
+      document.querySelector('label[for="submitPlaceOfBirth"]').textContent = translations[lang].placeOfBirthLabel;
+      document.querySelector('label[for="submitAffiliationNumber"]').textContent = translations[lang].affiliationNumberLabel;
+      document.querySelector('label[for="submitNumber"]').textContent = translations[lang].numberLabel;
+      document.querySelector('label[for="submitCardPic"]').textContent = translations[lang].submitCardPicLabel;
+      document.querySelector('label[for="editName"]').textContent = translations[lang].nameLabel;
+      document.querySelector('label[for="editAge"]').textContent = translations[lang].ageLabel;
+      document.querySelector('label[for="editGender"]').textContent = translations[lang].genderLabel;
+      document.querySelector('label[for="editPlaceOfBirth"]').textContent = translations[lang].placeOfBirthLabel;
+      document.querySelector('label[for="editAffiliationNumber"]').textContent = translations[lang].affiliationNumberLabel;
+      document.querySelector('label[for="editNumber"]').textContent = translations[lang].numberLabel;
+      document.getElementById('submitButton').textContent = translations[lang].submitButton;
+      document.getElementById('cancelButton').textContent = translations[lang].cancelButton;
+      document.getElementById('saveButton').textContent = translations[lang].saveButton;
+      document.getElementById('deleteButtonYes').textContent = translations[lang].deleteButtonYes;
+      document.getElementById('deleteButtonNo').textContent = translations[lang].deleteButtonNo;
+      document.getElementById('successMessage').textContent = translations[lang].successMessage;
     }
 
     async function fetchTrainees() {
@@ -172,35 +390,85 @@
           <td>${trainee.number}</td>
           <td><img src="${trainee.card_pic_url}" alt="Card Picture"></td>
           <td class="action-buttons">
-            <button class="edit-button" onclick="editTrainee(${trainee.id})">Edit</button>
-            <button class="delete-button" onclick="deleteTrainee(${trainee.id})">Delete</button>
+            <button class="edit-button" onclick="openEditModal(${trainee.id}, '${trainee.name}', ${trainee.age}, '${trainee.gender}', '${trainee.place_of_birth}', '${trainee.affiliation_number}', '${trainee.number}')">Edit</button>
+            <button class="delete-button" onclick="openDeleteModal(${trainee.id})">Delete</button>
           </td>
         `;
         tableBody.appendChild(row);
       });
     }
 
-    async function editTrainee(id) {
-      const trainee = {
-        name: prompt("Enter new name:"),
-        age: prompt("Enter new age:"),
-        gender: prompt("Enter new gender (Male/Female):"),
-        placeOfBirth: prompt("Enter new place of birth:"),
-        affiliationNumber: prompt("Enter new affiliation number:"),
-        number: prompt("Enter new contact number:")
-      };
+    function openSubmitModal() {
+      document.getElementById('submitModal').style.display = 'block';
+    }
 
-      if (trainee.name && trainee.age && trainee.gender && trainee.placeOfBirth && trainee.affiliationNumber && trainee.number) {
+    function openEditModal(id, name, age, gender, placeOfBirth, affiliationNumber, number) {
+      document.getElementById('editTraineeId').value = id;
+      document.getElementById('editName').value = name;
+      document.getElementById('editAge').value = age;
+      document.getElementById('editGender').value = gender;
+      document.getElementById('editPlaceOfBirth').value = placeOfBirth;
+      document.getElementById('editAffiliationNumber').value = affiliationNumber;
+      document.getElementById('editNumber').value = number;
+      document.getElementById('editModal').style.display = 'block';
+    }
+
+    function openDeleteModal(id) {
+      document.getElementById('deleteTraineeId').value = id;
+      document.getElementById('deleteModal').style.display = 'block';
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+
+    async function submitTrainee() {
+      const form = document.getElementById('submitForm');
+      const formData = new FormData(form);
+
+      const response = await fetch('/api/trainees/submit', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        fetchTrainees();
+        closeModal('submitModal');
+        showSuccessDialog();
+      } else {
+        alert('Failed to submit trainee information');
+      }
+    }
+
+    async function saveTrainee() {
+      const id = document.getElementById('editTraineeId').value;
+      const name = document.getElementById('editName').value;
+      const age = document.getElementById('editAge').value;
+      const gender = document.getElementById('editGender').value;
+      const placeOfBirth = document.getElementById('editPlaceOfBirth').value;
+      const affiliationNumber = document.getElementById('editAffiliationNumber').value;
+      const number = document.getElementById('editNumber').value;
+
+      if (name && age && gender && placeOfBirth && affiliationNumber && number) {
         const response = await fetch(`/api/trainees/${id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(trainee)
+          body: JSON.stringify({
+            name,
+            age,
+            gender,
+            placeOfBirth,
+            affiliationNumber,
+            number
+          })
         });
 
         if (response.ok) {
           fetchTrainees();
+          closeModal('editModal');
+          showSuccessDialog();
         } else {
           alert('Failed to update trainee information');
         }
@@ -209,18 +477,37 @@
       }
     }
 
-    async function deleteTrainee(id) {
-      if (confirm("Are you sure you want to delete this trainee?")) {
-        const response = await fetch(`/api/trainees/${id}`, {
-          method: 'DELETE'
-        });
+    async function confirmDeleteTrainee() {
+      const id = document.getElementById('deleteTraineeId').value;
 
-        if (response.ok) {
-          fetchTrainees();
-        } else {
-          alert('Failed to delete trainee');
-        }
+      const response = await fetch(`/api/trainees/${id}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        fetchTrainees();
+        closeModal('deleteModal');
+      } else {
+        alert('Failed to delete trainee');
       }
+    }
+
+    function showSuccessDialog() {
+      const dialog = document.getElementById('successDialog');
+      dialog.style.display = 'block';
+    }
+
+    function closeSuccessDialog() {
+      const dialog = document.getElementById('successDialog');
+      dialog.style.display = 'none';
+    }
+
+    function printSuccessMessage() {
+      const successMessage = document.getElementById('successMessage').textContent;
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`<html><head><title>Print</title></head><body>${successMessage}</body></html>`);
+      printWindow.document.close();
+      printWindow.print();
     }
 
     document.addEventListener('DOMContentLoaded', fetchTrainees);

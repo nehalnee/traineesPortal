@@ -1,11 +1,11 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const router = express.Router();
-const db = new sqlite3.Database('./fighters.db');
+const db = new sqlite3.Database('./trainees.db');
 
 // View all fighters
 router.get('/', (req, res) => {
-  const query = `SELECT * FROM fighters`;
+  const query = `SELECT * FROM trainees`;
 
   db.all(query, [], (err, rows) => {
     if (err) {
