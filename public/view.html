@@ -6,26 +6,28 @@
   <title>View Trainees</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap');
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 
     body {
       font-family: 'Open Sans', sans-serif;
       margin: 20px;
-      background-color: #f0f2f5;
+      background-color: #e0f7fa;
     }
     .container {
       width: 100%;
       max-width: 1200px;
       margin: 0 auto;
       padding: 20px;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      background: #ffffff;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     h1 {
       text-align: center;
-      color: #333;
+      color: #007bb5;
       font-weight: 600;
       margin-bottom: 20px;
+      font-size: 28px;
     }
     table {
       width: 100%;
@@ -33,19 +35,21 @@
       margin-top: 20px;
     }
     th, td {
-      border: 1px solid #ddd;
+      border: 1px solid #007bb5;
       padding: 12px;
       text-align: center;
       font-size: 18px;
     }
     th {
-      background-color: #f4f4f4;
+      background-color: #b3e5fc;
+      color: #007bb5;
+      font-weight: bold;
     }
     tr:nth-child(even) {
-      background-color: #f9f9f9;
+      background-color: #e1f5fe;
     }
     tr:hover {
-      background-color: #f1f1f1;
+      background-color: #b3e5fc;
     }
     img {
       width: 100px;
@@ -57,15 +61,23 @@
       margin-bottom: 10px;
     }
     .lang-switch button {
-      background-color: transparent;
-      color: #4CAF50;
+      background-color: #007bb5;
+      color: white;
       border: none;
+      border-radius: 50%;
       cursor: pointer;
-      padding: 5px 10px;
+      padding: 10px;
       font-size: 16px;
+      margin-left: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .lang-switch button i {
+      margin-right: 5px;
     }
     .lang-switch button:hover {
-      text-decoration: underline;
+      background-color: #005f86;
     }
     .action-buttons {
       display: flex;
@@ -73,26 +85,29 @@
       gap: 10px;
     }
     .action-buttons button {
-      padding: 10px 15px;
+      padding: 10px;
       border: none;
-      border-radius: 4px;
+      border-radius: 50%;
       cursor: pointer;
       font-size: 16px;
       transition: background-color 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .edit-button {
-      background-color: #007bff;
+      background-color: #007bb5;
       color: white;
     }
     .edit-button:hover {
-      background-color: #0056b3;
+      background-color: #005f86;
     }
     .delete-button {
       background-color: #dc3545;
       color: white;
     }
     .delete-button:hover {
-      background-color: #c82333;
+      background-color: #a52834;
     }
     .modal {
       display: none;
@@ -107,17 +122,17 @@
       padding-top: 60px;
     }
     .modal-content {
-      background-color: #fefefe;
+      background-color: #ffffff;
       margin: 5% auto;
       padding: 20px;
-      border: 1px solid #888;
+      border: 1px solid #007bb5;
       width: 80%;
       max-width: 500px;
-      border-radius: 8px;
+      border-radius: 15px;
       box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     }
     .close {
-      color: #aaa;
+      color: #007bb5;
       float: right;
       font-size: 28px;
       font-weight: bold;
@@ -134,14 +149,14 @@
       margin: 10px auto;
       display: block;
       border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 16px;
+      border-radius: 5px;
+      font-size: 18px;
     }
     .modal-button {
       padding: 10px 15px;
       margin: 10px 5px;
       border: none;
-      border-radius: 4px;
+      border-radius: 50%;
       cursor: pointer;
       font-size: 16px;
       transition: background-color 0.3s ease;
@@ -181,15 +196,15 @@
 <body>
   <div class="container">
     <div class="lang-switch">
-      <button onclick="setLanguage('en')">English</button>
-      <button onclick="setLanguage('ar')">العربية</button>
+      <button onclick="setLanguage('en')"><i class="fas fa-language"></i>English</button>
+      <button onclick="setLanguage('ar')"><i class="fas fa-language"></i>العربية</button>
     </div>
     <h1 id="viewTitle">Trainees Information</h1>
-    <button onclick="openSubmitModal()">Submit New Trainee</button>
+    <button onclick="openSubmitModal()" style="background-color: #007bb5; color: white; border: none; border-radius: 50%; padding: 10px 20px; font-size: 16px; cursor: pointer;">+</button>
     <table id="traineesTable">
       <thead>
         <tr>
-          <th id="nameHeader">Name</th>
+          <th id="nameHeader">Full Name</th>
           <th id="ageHeader">Age</th>
           <th id="genderHeader">Gender</th>
           <th id="placeOfBirthHeader">Place of Birth</th>
@@ -211,22 +226,25 @@
       <span class="close" onclick="closeModal('submitModal')">&times;</span>
       <h2 id="submitTitle">Submit New Trainee</h2>
       <form id="submitForm" enctype="multipart/form-data">
-        <label for="submitName" id="submitNameLabel">Name:</label>
-        <input type="text" id="submitName" class="modal-input" name="name" placeholder="Name">
+        <label for="fullName" id="submitNameLabel">Full Name:</label>
+        <input type="text" id="submitFullName" class="modal-input" name="fullName" placeholder="Full Name">
         <label for="submitAge" id="submitAgeLabel">Age:</label>
-        <input type="number" id="submitAge" class="modal-input" name="age" placeholder="Age">
+        <input type="number" id="submitAge" class="modal-input" name="age" placeholder="Age" min="1" max="100">
         <label for="submitGender" id="submitGenderLabel">Gender:</label>
-        <input type="text" id="submitGender" class="modal-input" name="gender" placeholder="Gender">
+        <select id="submitGender" class="modal-input" name="gender">
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
         <label for="submitPlaceOfBirth" id="submitPlaceOfBirthLabel">Place of Birth:</label>
         <input type="text" id="submitPlaceOfBirth" class="modal-input" name="placeOfBirth" placeholder="Place of Birth">
         <label for="submitAffiliationNumber" id="submitAffiliationNumberLabel">Affiliation Number:</label>
         <input type="text" id="submitAffiliationNumber" class="modal-input" name="affiliationNumber" placeholder="Affiliation Number">
         <label for="submitNumber" id="submitNumberLabel">Contact Number:</label>
-        <input type="text" id="submitNumber" class="modal-input" name="number" placeholder="Contact Number">
+        <input type="text" id="submitNumber" class="modal-input" name="number" placeholder="Contact Number" pattern="[0-9]{10}">
         <label for="submitCardPic" id="submitCardPicLabel">Card Picture:</label>
-        <input type="file" id="submitCardPic" class="modal-input" name="cardPic">
-        <button type="button" class="modal-button save-button" onclick="submitTrainee()">Submit</button>
-        <button type="button" class="modal-button cancel-button" onclick="closeModal('submitModal')">Cancel</button>
+        <input type="file" id="submitCardPic" class="modal-input" name="cardPic" accept="image/*,.pdf">
+        <button type="button" class="modal-button save-button" onclick="submitTrainee()">✔</button>
+        <button type="button" class="modal-button cancel-button" onclick="closeModal('submitModal')">✖</button>
       </form>
     </div>
   </div>
@@ -237,20 +255,23 @@
       <span class="close" onclick="closeModal('editModal')">&times;</span>
       <h2 id="editTitle">Edit Trainee</h2>
       <input type="hidden" id="editTraineeId">
-      <label for="editName" id="nameLabel">Name:</label>
-      <input type="text" id="editName" class="modal-input" placeholder="Name">
-      <label for="editAge" id="ageLabel">Age:</label>
-      <input type="number" id="editAge" class="modal-input" placeholder="Age">
-      <label for="editGender" id="genderLabel">Gender:</label>
-      <input type="text" id="editGender" class="modal-input" placeholder="Gender">
-      <label for="editPlaceOfBirth" id="placeOfBirthLabel">Place of Birth:</label>
+      <label for="editFullName" id="editNameLabel">Full Name:</label>
+      <input type="text" id="editFullName" class="modal-input" placeholder="Full Name">
+      <label for="editAge" id="editAgeLabel">Age:</label>
+      <input type="number" id="editAge" class="modal-input" placeholder="Age" min="1" max="100">
+      <label for="editGender" id="editGenderLabel">Gender:</label>
+      <select id="editGender" class="modal-input">
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+      <label for="editPlaceOfBirth" id="editPlaceOfBirthLabel">Place of Birth:</label>
       <input type="text" id="editPlaceOfBirth" class="modal-input" placeholder="Place of Birth">
-      <label for="editAffiliationNumber" id="affiliationNumberLabel">Affiliation Number:</label>
+      <label for="editAffiliationNumber" id="editAffiliationNumberLabel">Affiliation Number:</label>
       <input type="text" id="editAffiliationNumber" class="modal-input" placeholder="Affiliation Number">
-      <label for="editNumber" id="numberLabel">Contact Number:</label>
-      <input type="text" id="editNumber" class="modal-input" placeholder="Contact Number">
-      <button class="modal-button save-button" id="saveButton" onclick="saveTrainee()">Save</button>
-      <button class="modal-button cancel-button" id="cancelButton" onclick="closeModal('editModal')">Cancel</button>
+      <label for="editNumber" id="editNumberLabel">Contact Number:</label>
+      <input type="text" id="editNumber" class="modal-input" placeholder="Contact Number" pattern="[0-9]{10}">
+      <button class="modal-button save-button" id="saveButton" onclick="saveTrainee()">✔</button>
+      <button class="modal-button cancel-button" id="cancelButton" onclick="closeModal('editModal')">✖</button>
     </div>
   </div>
 
@@ -260,15 +281,14 @@
       <span class="close" onclick="closeModal('deleteModal')">&times;</span>
       <h2 id="deleteTitle">Are you sure you want to delete this trainee?</h2>
       <input type="hidden" id="deleteTraineeId">
-      <button class="modal-button save-button" id="deleteButtonYes" onclick="confirmDeleteTrainee()">Yes</button>
-      <button class="modal-button cancel-button" id="deleteButtonNo" onclick="closeModal('deleteModal')">No</button>
+      <button class="modal-button save-button" id="deleteButtonYes" onclick="confirmDeleteTrainee()">✔</button>
+      <button class="modal-button cancel-button" id="deleteButtonNo" onclick="closeModal('deleteModal')">✖</button>
     </div>
   </div>
 
   <!-- Success Dialog -->
   <div id="successDialog" class="success-dialog">
     <span id="successMessage">Information submitted successfully!</span>
-    <button onclick="printSuccessMessage()">Print</button>
     <button onclick="closeSuccessDialog()">Close</button>
   </div>
 
@@ -276,7 +296,7 @@
     const translations = {
       en: {
         viewTitle: 'Trainees Information',
-        nameHeader: 'Name',
+        nameHeader: 'Full Name',
         ageHeader: 'Age',
         genderHeader: 'Gender',
         placeOfBirthHeader: 'Place of Birth',
@@ -286,7 +306,7 @@
         submitTitle: 'Submit New Trainee',
         editTitle: 'Edit Trainee',
         deleteTitle: 'Are you sure you want to delete this trainee?',
-        nameLabel: 'Name:',
+        nameLabel: 'Full Name:',
         ageLabel: 'Age:',
         genderLabel: 'Gender:',
         placeOfBirthLabel: 'Place of Birth:',
@@ -302,7 +322,7 @@
       },
       ar: {
         viewTitle: 'معلومات المتدربين',
-        nameHeader: 'الاسم',
+        nameHeader: 'الاسم الكامل',
         ageHeader: 'العمر',
         genderHeader: 'الجنس',
         placeOfBirthHeader: 'مكان الولادة',
@@ -312,7 +332,7 @@
         submitTitle: 'تقديم متدرب جديد',
         editTitle: 'تعديل المتدرب',
         deleteTitle: 'هل أنت متأكد أنك تريد حذف هذا المتدرب؟',
-        nameLabel: 'الاسم:',
+        nameLabel: 'الاسم الكامل:',
         ageLabel: 'العمر:',
         genderLabel: 'الجنس:',
         placeOfBirthLabel: 'مكان الولادة:',
@@ -333,6 +353,7 @@
       const successDialog = document.getElementById('successDialog');
       if (lang === 'ar') {
         container.classList.add('rtl');
+        container.classList.add('rtl');
         successDialog.classList.add('rtl');
       } else {
         container.classList.remove('rtl');
@@ -351,25 +372,36 @@
       document.querySelector('#submitModal h2').textContent = translations[lang].submitTitle;
       document.querySelector('#editModal h2').textContent = translations[lang].editTitle;
       document.querySelector('#deleteModal h2').textContent = translations[lang].deleteTitle;
-      document.querySelector('label[for="submitName"]').textContent = translations[lang].nameLabel;
+      document.querySelector('label[for="submitFullName"]').textContent = translations[lang].nameLabel;
       document.querySelector('label[for="submitAge"]').textContent = translations[lang].ageLabel;
       document.querySelector('label[for="submitGender"]').textContent = translations[lang].genderLabel;
       document.querySelector('label[for="submitPlaceOfBirth"]').textContent = translations[lang].placeOfBirthLabel;
       document.querySelector('label[for="submitAffiliationNumber"]').textContent = translations[lang].affiliationNumberLabel;
       document.querySelector('label[for="submitNumber"]').textContent = translations[lang].numberLabel;
       document.querySelector('label[for="submitCardPic"]').textContent = translations[lang].submitCardPicLabel;
-      document.querySelector('label[for="editName"]').textContent = translations[lang].nameLabel;
+      document.querySelector('label[for="editFullName"]').textContent = translations[lang].nameLabel;
       document.querySelector('label[for="editAge"]').textContent = translations[lang].ageLabel;
       document.querySelector('label[for="editGender"]').textContent = translations[lang].genderLabel;
       document.querySelector('label[for="editPlaceOfBirth"]').textContent = translations[lang].placeOfBirthLabel;
       document.querySelector('label[for="editAffiliationNumber"]').textContent = translations[lang].affiliationNumberLabel;
       document.querySelector('label[for="editNumber"]').textContent = translations[lang].numberLabel;
-      document.getElementById('submitButton').textContent = translations[lang].submitButton;
-      document.getElementById('cancelButton').textContent = translations[lang].cancelButton;
-      document.getElementById('saveButton').textContent = translations[lang].saveButton;
-      document.getElementById('deleteButtonYes').textContent = translations[lang].deleteButtonYes;
-      document.getElementById('deleteButtonNo').textContent = translations[lang].deleteButtonNo;
       document.getElementById('successMessage').textContent = translations[lang].successMessage;
+
+      document.getElementById('submitFullName').placeholder = translations[lang].nameLabel.slice(0, -1);
+      document.getElementById('submitAge').placeholder = translations[lang].ageLabel.slice(0, -1);
+      document.getElementById('submitPlaceOfBirth').placeholder = translations[lang].placeOfBirthLabel.slice(0, -1);
+      document.getElementById('submitAffiliationNumber').placeholder = translations[lang].affiliationNumberLabel.slice(0, -1);
+      document.getElementById('submitNumber').placeholder = translations[lang].numberLabel.slice(0, -1);
+      document.getElementById('editFullName').placeholder = translations[lang].nameLabel.slice(0, -1);
+      document.getElementById('editAge').placeholder = translations[lang].ageLabel.slice(0, -1);
+      document.getElementById('editPlaceOfBirth').placeholder = translations[lang].placeOfBirthLabel.slice(0, -1);
+      document.getElementById('editAffiliationNumber').placeholder = translations[lang].affiliationNumberLabel.slice(0, -1);
+      document.getElementById('editNumber').placeholder = translations[lang].numberLabel.slice(0, -1);
+
+      document.querySelector('select#submitGender option[value="Male"]').textContent = lang === 'ar' ? 'ذكر' : 'Male';
+      document.querySelector('select#submitGender option[value="Female"]').textContent = lang === 'ar' ? 'أنثى' : 'Female';
+      document.querySelector('select#editGender option[value="Male"]').textContent = lang === 'ar' ? 'ذكر' : 'Male';
+      document.querySelector('select#editGender option[value="Female"]').textContent = lang === 'ar' ? 'أنثى' : 'Female';
     }
 
     async function fetchTrainees() {
@@ -382,7 +414,7 @@
       trainees.forEach(trainee => {
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td>${trainee.name}</td>
+          <td>${trainee.full_name}</td>
           <td>${trainee.age}</td>
           <td>${trainee.gender}</td>
           <td>${trainee.place_of_birth}</td>
@@ -390,8 +422,8 @@
           <td>${trainee.number}</td>
           <td><img src="${trainee.card_pic_url}" alt="Card Picture"></td>
           <td class="action-buttons">
-            <button class="edit-button" onclick="openEditModal(${trainee.id}, '${trainee.name}', ${trainee.age}, '${trainee.gender}', '${trainee.place_of_birth}', '${trainee.affiliation_number}', '${trainee.number}')">Edit</button>
-            <button class="delete-button" onclick="openDeleteModal(${trainee.id})">Delete</button>
+            <button class="edit-button" onclick="openEditModal(${trainee.id}, '${trainee.full_name}', ${trainee.age}, '${trainee.gender}', '${trainee.place_of_birth}', '${trainee.affiliation_number}', '${trainee.number}')"><i class="fas fa-edit"></i></button>
+            <button class="delete-button" onclick="openDeleteModal(${trainee.id})"><i class="fas fa-trash-alt"></i></button>
           </td>
         `;
         tableBody.appendChild(row);
@@ -402,9 +434,9 @@
       document.getElementById('submitModal').style.display = 'block';
     }
 
-    function openEditModal(id, name, age, gender, placeOfBirth, affiliationNumber, number) {
+    function openEditModal(id, fullName, age, gender, placeOfBirth, affiliationNumber, number) {
       document.getElementById('editTraineeId').value = id;
-      document.getElementById('editName').value = name;
+      document.getElementById('editFullName').value = fullName;
       document.getElementById('editAge').value = age;
       document.getElementById('editGender').value = gender;
       document.getElementById('editPlaceOfBirth').value = placeOfBirth;
@@ -442,21 +474,21 @@
 
     async function saveTrainee() {
       const id = document.getElementById('editTraineeId').value;
-      const name = document.getElementById('editName').value;
+      const fullName = document.getElementById('editFullName').value;
       const age = document.getElementById('editAge').value;
       const gender = document.getElementById('editGender').value;
       const placeOfBirth = document.getElementById('editPlaceOfBirth').value;
       const affiliationNumber = document.getElementById('editAffiliationNumber').value;
       const number = document.getElementById('editNumber').value;
 
-      if (name && age && gender && placeOfBirth && affiliationNumber && number) {
+      if (fullName && age && gender && placeOfBirth && affiliationNumber && number) {
         const response = await fetch(`/api/trainees/${id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            name,
+            fullName,
             age,
             gender,
             placeOfBirth,
@@ -500,14 +532,6 @@
     function closeSuccessDialog() {
       const dialog = document.getElementById('successDialog');
       dialog.style.display = 'none';
-    }
-
-    function printSuccessMessage() {
-      const successMessage = document.getElementById('successMessage').textContent;
-      const printWindow = window.open('', '_blank');
-      printWindow.document.write(`<html><head><title>Print</title></head><body>${successMessage}</body></html>`);
-      printWindow.document.close();
-      printWindow.print();
     }
 
     document.addEventListener('DOMContentLoaded', fetchTrainees);

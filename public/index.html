@@ -3,64 +3,67 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trainee Portal</title>
+  <title>Submit Trainee Information</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap');
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 
     body {
       font-family: 'Open Sans', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      background-color: #f0f2f5;
+      margin: 20px;
+      background-color: #e0f7fa;
     }
     .container {
       width: 100%;
-      max-width: 600px;
+      max-width: 1200px;
+      margin: 0 auto;
       padding: 20px;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      background: #ffffff;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     h1 {
       text-align: center;
-      color: #333;
+      color: #007bb5;
       font-weight: 600;
+      margin-bottom: 20px;
+      font-size: 28px;
     }
     form {
       display: flex;
       flex-direction: column;
+      align-items: center;
     }
     label {
+      font-size: 20px;
+      color: #007bb5;
       margin: 10px 0 5px;
-      color: #555;
-      font-weight: 600;
+      font-weight: bold;
     }
-    input, button, select {
-      padding: 12px;
-      margin-bottom: 12px;
+    input[type="text"], input[type="number"], input[type="file"], select {
+      width: 90%;
+      max-width: 500px;
+      padding: 10px;
+      margin: 5px 0 10px;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      border-radius: 5px;
       font-size: 18px;
     }
-    .error {
-      color: red;
-      margin-top: -10px;
-      margin-bottom: 10px;
-      font-size: 14px;
-    }
-    button {
-      background-color: #4CAF50;
+    .submit-button {
+      background-color: #007bb5;
       color: white;
-      cursor: pointer;
       border: none;
-      font-size: 18px;
-      transition: background-color 0.3s ease;
+      border-radius: 50%;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    button:hover {
-      background-color: #45a049;
+    .submit-button:hover {
+      background-color: #005f86;
     }
     .lang-switch {
       display: flex;
@@ -68,116 +71,113 @@
       margin-bottom: 10px;
     }
     .lang-switch button {
-      background-color: transparent;
-      color: #4CAF50;
+      background-color: #007bb5;
+      color: white;
       border: none;
+      border-radius: 50%;
       cursor: pointer;
-      padding: 5px 10px;
+      padding: 10px;
       font-size: 16px;
+      margin-left: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .lang-switch button i {
+      margin-right: 5px;
     }
     .lang-switch button:hover {
-      text-decoration: underline;
+      background-color: #005f86;
+    }
+    .success-dialog {
+      background-color: #4CAF50;
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      z-index: 1000;
+      display: none;
+    }
+    .rtl {
+      direction: rtl;
     }
   </style>
 </head>
 <body>
-  <div class="container" id="container">
+  <div class="container">
     <div class="lang-switch">
-      <button onclick="setLanguage('en')">English</button>
-      <button onclick="setLanguage('ar')">العربية</button>
+      <button onclick="setLanguage('en')"><i class="fas fa-language"></i>English</button>
+      <button onclick="setLanguage('ar')"><i class="fas fa-language"></i>العربية</button>
     </div>
     <h1 id="formTitle">Submit Trainee Information</h1>
-    <form id="traineeForm" action="/api/trainees/submit" method="POST" enctype="multipart/form-data">
-      <label for="name" id="nameLabel">Name:</label>
-      <input type="text" id="name" name="name" required>
-      <div class="error" id="nameError"></div>
-
+    <form id="traineeForm" enctype="multipart/form-data">
+      <label for="fullName" id="nameLabel">Full Name:</label>
+      <input type="text" id="fullName" name="fullName" placeholder="Full Name" required>
       <label for="age" id="ageLabel">Age:</label>
-      <input type="number" id="age" name="age" min="1" max="100" required>
-      <div class="error" id="ageError"></div>
-
+      <input type="number" id="age" name="age" placeholder="Age" min="1" max="100" required>
       <label for="gender" id="genderLabel">Gender:</label>
       <select id="gender" name="gender" required>
-        <option value="" disabled selected>Select Gender</option>
         <option value="Male">Male</option>
         <option value="Female">Female</option>
       </select>
-      <div class="error" id="genderError"></div>
-
       <label for="placeOfBirth" id="placeOfBirthLabel">Place of Birth:</label>
-      <input type="text" id="placeOfBirth" name="placeOfBirth" required>
-      <div class="error" id="placeOfBirthError"></div>
-
+      <input type="text" id="placeOfBirth" name="placeOfBirth" placeholder="Place of Birth" required>
       <label for="affiliationNumber" id="affiliationNumberLabel">Affiliation Number:</label>
-      <input type="text" id="affiliationNumber" name="affiliationNumber" required>
-      <div class="error" id="affiliationNumberError"></div>
-
+      <input type="text" id="affiliationNumber" name="affiliationNumber" placeholder="Affiliation Number" required>
       <label for="number" id="numberLabel">Contact Number:</label>
-      <input type="text" id="number" name="number" pattern="[0-9]+" required>
-      <div class="error" id="numberError"></div>
-
+      <input type="text" id="number" name="number" placeholder="Contact Number" pattern="[0-9]{10}" required>
       <label for="cardPic" id="cardPicLabel">Card Picture:</label>
-      <input type="file" id="cardPic" name="cardPic" required>
-      <div class="error" id="cardPicError"></div>
-
-      <button type="submit" id="submitButton">Submit</button>
+      <input type="file" id="cardPic" name="cardPic" accept="image/*,.pdf" required>
+      <button type="button" class="submit-button" onclick="submitTrainee()">✔</button>
     </form>
+    
+  </div>
+
+  <!-- Success Dialog -->
+  <div id="successDialog" class="success-dialog">
+    <span id="successMessage">Information submitted successfully!</span>
+    <button onclick="closeSuccessDialog()">Close</button>
   </div>
 
   <script>
     const translations = {
       en: {
         formTitle: 'Submit Trainee Information',
-        nameLabel: 'Name:',
+        nameLabel: 'Full Name:',
         ageLabel: 'Age:',
         genderLabel: 'Gender:',
         placeOfBirthLabel: 'Place of Birth:',
         affiliationNumberLabel: 'Affiliation Number:',
         numberLabel: 'Contact Number:',
         cardPicLabel: 'Card Picture:',
-        submitButton: 'Submit',
-        nameError: 'Name is required.',
-        ageError: 'Age is required.',
-        genderError: 'Gender is required.',
-        placeOfBirthError: 'Place of Birth is required.',
-        affiliationNumberError: 'Affiliation Number is required.',
-        numberError: 'Contact Number is required.',
-        cardPicError: 'Card Picture is required.',
-        genderOptions: {
-          male: 'Male',
-          female: 'Female'
-        }
+        successMessage: 'Information submitted successfully!'
       },
       ar: {
-        formTitle: 'إدخال معلومات المتدرب',
-        nameLabel: 'الاسم:',
+        formTitle: 'تقديم معلومات المتدرب',
+        nameLabel: 'الاسم الكامل:',
         ageLabel: 'العمر:',
         genderLabel: 'الجنس:',
         placeOfBirthLabel: 'مكان الولادة:',
         affiliationNumberLabel: 'رقم الانتساب:',
         numberLabel: 'رقم الاتصال:',
         cardPicLabel: 'صورة البطاقة:',
-        submitButton: 'إرسال',
-        nameError: 'الاسم مطلوب.',
-        ageError: 'العمر مطلوب.',
-        genderError: 'الجنس مطلوب.',
-        placeOfBirthError: 'مكان الولادة مطلوب.',
-        affiliationNumberError: 'رقم الانتساب مطلوب.',
-        numberError: 'رقم الاتصال مطلوب.',
-        cardPicError: 'صورة البطاقة مطلوبة.',
-        genderOptions: {
-          male: 'ذكر',
-          female: 'أنثى'
-        }
+        successMessage: 'تم تقديم المعلومات بنجاح!'
       }
     };
 
     function setLanguage(lang) {
-      const container = document.getElementById('container');
+      const container = document.querySelector('.container');
+      const successDialog = document.getElementById('successDialog');
       if (lang === 'ar') {
-        container.style.direction = 'rtl';
+        container.classList.add('rtl');
+        successDialog.classList.add('rtl');
       } else {
-        container.style.direction = 'ltr';
+        container.classList.remove('rtl');
+        successDialog.classList.remove('rtl');
       }
 
       document.getElementById('formTitle').textContent = translations[lang].formTitle;
@@ -188,43 +188,67 @@
       document.getElementById('affiliationNumberLabel').textContent = translations[lang].affiliationNumberLabel;
       document.getElementById('numberLabel').textContent = translations[lang].numberLabel;
       document.getElementById('cardPicLabel').textContent = translations[lang].cardPicLabel;
-      document.getElementById('submitButton').textContent = translations[lang].submitButton;
-
-      document.querySelector('#gender option[value="Male"]').textContent = translations[lang].genderOptions.male;
-      document.querySelector('#gender option[value="Female"]').textContent = translations[lang].genderOptions.female;
-
-      // Update error messages
-      document.getElementById('nameError').dataset.errorText = translations[lang].nameError;
-      document.getElementById('ageError').dataset.errorText = translations[lang].ageError;
-      document.getElementById('genderError').dataset.errorText = translations[lang].genderError;
-      document.getElementById('placeOfBirthError').dataset.errorText = translations[lang].placeOfBirthError;
-      document.getElementById('affiliationNumberError').dataset.errorText = translations[lang].affiliationNumberError;
-      document.getElementById('numberError').dataset.errorText = translations[lang].numberError;
-      document.getElementById('cardPicError').dataset.errorText = translations[lang].cardPicError;
+      document.getElementById('fullName').placeholder = translations[lang].nameLabel.slice(0, -1);
+      document.getElementById('age').placeholder = translations[lang].ageLabel.slice(0, -1);
+      document.getElementById('gender').options[0].text = lang === 'ar' ? 'ذكر' : 'Male';
+      document.getElementById('gender').options[1].text = lang === 'ar' ? 'أنثى' : 'Female';
+      document.getElementById('placeOfBirth').placeholder = translations[lang].placeOfBirthLabel.slice(0, -1);
+      document.getElementById('affiliationNumber').placeholder = translations[lang].affiliationNumberLabel.slice(0, -1);
+      document.getElementById('number').placeholder = translations[lang].numberLabel.slice(0, -1);
+      document.getElementById('successMessage').textContent = translations[lang].successMessage;
     }
 
-    document.getElementById('traineeForm').addEventListener('submit', function (e) {
-      let hasError = false;
+    async function submitTrainee() {
+      const form = document.getElementById('traineeForm');
+      const formData = new FormData(form);
 
-      const fields = ['name', 'age', 'gender', 'placeOfBirth', 'affiliationNumber', 'number', 'cardPic'];
-      fields.forEach(field => {
-        const input = document.getElementById(field);
-        const error = document.getElementById(`${field}Error`);
-        if (input.value === '' || (field === 'cardPic' && input.files.length === 0)) {
-          error.textContent = error.dataset.errorText;
-          hasError = true;
-        } else {
-          error.textContent = '';
-        }
+      const response = await fetch('/api/trainees/submit', {
+        method: 'POST',
+        body: formData
       });
 
-      if (hasError) {
-        e.preventDefault();
+      if (response.ok) {
+        showSuccessDialog();
+        form.reset();
+      } else {
+        alert('Failed to submit trainee information');
       }
-    });
+    }
+
+    function showSuccessDialog() {
+      const dialog = document.getElementById('successDialog');
+      dialog.style.display = 'block';
+    }
+
+    function closeSuccessDialog() {
+      const dialog = document.getElementById('successDialog');
+      dialog.style.display = 'none';
+    }
 
     // Default language
     setLanguage('en');
+
+    async function submitTrainee() {
+      const form = document.getElementById('traineeForm');
+      const formData = new FormData(form);
+
+      // Log form data for debugging
+      for (var pair of formData.entries()) {
+          console.log(pair[0] + ': ' + pair[1]);
+      }
+
+      const response = await fetch('/api/trainees/submit', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        showSuccessDialog();
+        form.reset();
+      } else {
+        alert('Failed to submit trainee information');
+      }
+    }
   </script>
 </body>
 </html>
