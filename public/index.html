@@ -134,7 +134,6 @@
       <input type="file" id="cardPic" name="cardPic" accept="image/*,.pdf" required>
       <button type="button" class="submit-button" onclick="submitTrainee()">✔</button>
     </form>
-    
   </div>
 
   <!-- Success Dialog -->
@@ -227,28 +226,6 @@
 
     // Default language
     setLanguage('en');
-
-    async function submitTrainee() {
-      const form = document.getElementById('traineeForm');
-      const formData = new FormData(form);
-
-      // Log form data for debugging
-      for (var pair of formData.entries()) {
-          console.log(pair[0] + ': ' + pair[1]);
-      }
-
-      const response = await fetch('/api/trainees/submit', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (response.ok) {
-        showSuccessDialog();
-        form.reset();
-      } else {
-        alert('Failed to submit trainee information');
-      }
-    }
   </script>
 </body>
 </html>
