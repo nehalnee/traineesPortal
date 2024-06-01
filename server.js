@@ -10,14 +10,14 @@ const db = new sqlite3.Database('./trainees.db');
 // Middleware
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'submit-portal/uploads')));
 
 // Initialize the database
 db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS trainees (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
+      full_name TEXT NOT NULL,
       age INTEGER,
       gender TEXT,
       place_of_birth TEXT,
@@ -29,10 +29,8 @@ db.serialize(() => {
 });
 
 // Routes
-const traineeRoutes = require('./routes/trainees');
-const viewRoutes = require('./routes/view');
-app.use('/api/trainees', traineeRoutes);
-app.use('/view', viewRoutes);
+const submitRoutes = require('./submit-portal/routes/submitRoutes'); // Adjusted the routes path
+app.use('/api', submitRoutes);
 
 // Start Server
 const PORT = process.env.PORT || 5000;
